@@ -1,0 +1,1373 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); /* 基础样式 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(-45deg, #f3ec78, #af4261, #2b6cb0);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    margin-bottom: 30px;
+}
+/* 时间选择器 */
+.time-selector {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transform: translateZ(0); /* 开启GPU加速 */
+    perspective: 1000px;
+}
+
+/* 标签 */
+.time-selector label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #6B46C1;
+    margin-bottom: 12px;
+    position: relative;
+    padding-left: 28px;
+    transition: all 0.3s ease;
+}
+
+.time-selector label::before {
+    content: '⏳';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    animation: clockSwing 2s ease-in-out infinite;
+}
+
+@keyframes clockSwing {
+    0%, 100% { transform: translateY(-50%) rotate(-15deg); }
+    50% { transform: translateY(-50%) rotate(15deg); }
+}
+
+
+/* 标签样式 */
+.time-selector label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* 自定义下拉框容器 */
+.custom-select {
+    position: relative;
+    width: 200px;
+    cursor: pointer;
+}
+
+/* 当前选中的时间显示 */
+.selected-time {
+    padding: 10px 15px;
+    background-color: #f4f4f9;
+    border: 2px solid #d1d1e0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+/* 下拉箭头图标 */
+.selected-time::after {
+    content: '👉';
+    font-size: 12px;
+    color: #8b5cf6;
+    margin-left: 10px;
+}
+
+
+/*向右展开样式*/
+.time-options {
+    display: none;
+    position: absolute;
+    left: 100%;        /* 从父元素右侧开始 */
+    top: -10px;        /* 垂直对齐调整 */
+    min-width: 240px;  /* 最小宽度保证显示 */
+    margin-left: 12px; /* 与触发按钮的间距 */
+    background: #fff;
+    border: 2px solid #d1d1e0;
+    border-radius: 0 8px 8px 0; /* 右侧圆角 */
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.1); /* 右侧阴影 */
+    list-style: none;
+    padding: 12px 0;
+    z-index: 9999;     /* 提升层级 */
+    transform-origin: left center;
+    animation: slideRight 0.3s ease;
+}
+
+/* 展开动画 */
+@keyframes slideRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 显示控制 */
+.time-options.show {
+    display: block;
+}
+
+/* 防止遮挡的智能定位 */
+@media (max-width: 768px) {
+    .time-options {
+        left: auto;
+        right: 100%;  /* 移动端向左展开 */
+        margin-left: 0;
+        margin-right: 12px;
+        border-radius: 8px 0 0 8px;
+        box-shadow: -5px 5px 15px rgba(0,0,0,0.1);
+    }
+}
+
+/* 添加连接指示线 */
+.time-options::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 15px;
+    border: 7px solid transparent;
+    border-right-color: #d1d1e0;
+    z-index: -1;
+}
+
+
+.time-options li {
+    position: relative;
+    padding: 10px 15px 10px 28px; /* 左侧增加间距 */
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 添加符号 */
+.time-options li::before {
+    content: "⭐"; /* 使用圆点符号 */
+    color: #5cf6a1; /* 紫色与背景呼应 */
+    font-size: 18px;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+
+/* 悬停动效 */
+.time-options li:hover::before {
+    color: #FFD700; /* 悬停变金色 */
+    transform: translateY(-50%) scale(1.2);
+}
+
+/* 鼠标悬停时的效果 */
+.time-options li:hover {
+    background-color: #8b5cf6;
+    color: #fff;
+}
+
+/* 展开状态下的样式 */
+.custom-select.open .time-options {
+    display: block;
+}
+/* 主题选择 */
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.theme-option {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid transparent;
+}
+
+.theme-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.theme-option input {
+    display: none;
+}
+
+.theme-option input:checked + .theme-label {
+    color: #6B46C1;
+    font-weight: bold;
+}
+
+.theme-label {
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 时间轴 */
+.timeline-container {
+    position: relative;
+    height: 400px;
+    margin: 40px 0;
+    overflow-x: hidden;
+}
+
+/* 时间轴线 */
+.timeline-axis {
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    top: 30%;
+    height: 4px;
+    background: #6B46C1;
+    transform: translateY(-50%);
+}
+
+.timeline {
+    position: relative;
+    height: 100%;
+    min-width: calc(100% - 40px); /* 补偿左右留空 */
+    margin: 0 20px;
+}
+
+.timeline-item {
+    position: absolute;
+    top: 30%; /* 垂直居中 */
+    transform: translate(-50%, -50%); /* 水平和垂直居中 */
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* 时间点精准定位 */
+.timeline-dot {
+    position: absolute;
+    left: 50%;
+    top: 50%; 
+    width: 16px;
+    height: 16px;
+    background: #6B46C1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%); 
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+
+/* 金闪闪卡通气泡框 */
+.timeline-content {
+    position: absolute;
+    width: 200px; /* 适当加宽 */
+    padding: 15px;
+    background: linear-gradient(145deg, #FFD700 30%, #FFEC8B 100%) !important;
+    border: 3px solid #FFA500 !important;
+    border-radius: 25px 5px 25px 10px !important; /* 不对称圆角 */
+    box-shadow: 0 8px 25px rgba(255,165,0,0.3), 
+                inset 0 -4px 12px rgba(255,255,255,0.4) !important;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    animation: bubbleFloat 2s ease-in-out infinite;
+    transform-origin: bottom;
+    font-weight: bold;
+    color: #8B4513;
+}
+
+/* 卡通箭头 */
+.timeline-content::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    background: inherit;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    transform: translateX(-50%) rotate(var(--arrow-rotate)) scaleY(0.8);
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+    transition: all 0.3s ease;
+}
+
+/* 上下箭头方向调整 */
+.timeline-item:nth-child(odd) .timeline-content::after {
+    --arrow-rotate: 0deg;
+    top: 100%;
+    margin-top: -10px;
+}
+
+.timeline-item:nth-child(even) .timeline-content::after {
+    --arrow-rotate: 180deg;
+    bottom: 100%;
+    margin-bottom: -10px;
+}
+
+/* 气泡浮动动画 */
+@keyframes bubbleFloat {
+    0%, 100% { transform: translate(-50%, 0) rotate(-1deg); }
+    50% { transform: translate(-50%, -8px) rotate(1deg); }
+}
+
+/* 悬停弹性效果 */
+.timeline-item:hover .timeline-content {
+    animation: bubblePop 0.6s ease;
+    transform: translate(-50%, 0) scale(1.05);
+    box-shadow: 0 12px 30px rgba(255,165,0,0.5),
+                inset 0 -6px 15px rgba(255,255,255,0.6);
+}
+
+@keyframes bubblePop {
+    0% { transform: translate(-50%, 0) scale(1); }
+    50% { transform: translate(-50%, -15px) scale(1.15); }
+    100% { transform: translate(-50%, 0) scale(1.05); }
+}
+
+/* 动态高光效果 */
+.timeline-content::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    background: linear-gradient(120deg, 
+        rgba(255,255,255,0.3) 25%,
+        transparent 50%);
+    pointer-events: none;
+    animation: shine 3s infinite linear;
+}
+
+@keyframes shine {
+    from { transform: translateX(-100%) skew(-15deg); }
+    to { transform: translateX(100%) skew(-15deg); }
+}
+
+/* 奇数项在上方 */
+.timeline-item:nth-child(odd) .timeline-content {
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+.timeline-item:nth-child(odd) .timeline-content::after {
+    top: 100%; /* 箭头在气泡下方 */
+    border-top-color: white; /* 匹配气泡颜色 */
+}
+
+/* 偶数项在下方 */
+.timeline-item:nth-child(even) .timeline-content {
+    top: calc(100% + 15px); /* 气泡与时间点的间距 */
+    left: 50%; /* 确保气泡水平居中 */
+    transform: translateX(-50%); /* 水平居中 */
+}
+.timeline-item:nth-child(even) .timeline-content::after {
+    bottom: 100%; /* 箭头在气泡上方 */
+    border-bottom-color: white; /* 匹配气泡颜色 */
+}
+
+/* 悬停效果 */
+.timeline-item:hover .timeline-content {
+    transform: translate(-50%, -3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+}
+
+/* 事件卡片 */
+.event-card {
+    perspective: 1000px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #6B46C1, #4299E1);
+}
+
+.event-card:hover {
+    transform: rotateY(10deg) translateZ(20px);
+}
+
+/* 地图 */
+#event-map {
+    height: 400px;
+    border-radius: 15px;
+    margin: 20px 0;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* 聊天窗口容器（基础样式） */
+.chat-container {
+    margin-top: 30px;
+    background: #fff9fb; /* 软萌粉白背景 */
+    border-radius: 25px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.25); /* 粉系投影 */
+    position: relative;
+    overflow: visible; /* 允许装饰元素超出容器 */
+    animation: breathe 4s ease-in-out infinite; /* 呼吸感动画 */
+}
+
+/* 容器呼吸动画（颜色+缩放） */
+@keyframes breathe {
+    0% {
+        background: #fff9fb;
+        transform: scale(1);
+    }
+    50% {
+        background: #fff0f5; /* 轻微变粉 */
+        transform: scale(1.01); /* 微缩放 */
+    }
+    100% {
+        background: #fff9fb;
+        transform: scale(1);
+    }
+}
+
+/* 聊天窗口容器（基础样式） */
+.chat-container {
+    margin-top: 30px;
+    background: #fff9fb; /* 软萌粉白背景 */
+    border-radius: 25px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.25); /* 粉系投影 */
+    position: relative;
+    overflow: visible; /* 允许装饰元素超出容器 */
+    animation: breathe 4s ease-in-out infinite; /* 呼吸感动画 */
+}
+
+/* 容器呼吸动画（颜色+缩放） */
+@keyframes breathe {
+    0% {
+        background: #fff9fb;
+        transform: scale(1);
+    }
+    50% {
+        background: #fff0f5; /* 轻微变粉 */
+        transform: scale(1.01); /* 微缩放 */
+    }
+    100% {
+        background: #fff9fb;
+        transform: scale(1);
+    }
+}
+
+/* 聊天消息显示区域 */
+.chat-box {
+    height: 300px;
+    border: 2px solid transparent; /* 动态边框基础 */
+    border-radius: 18px;
+    padding: 15px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    background: #ffffff;
+    box-shadow: inset 0 0 12px rgba(255, 200, 210, 0.15);
+    position: relative;
+}
+
+/* 动态渐变边框 */
+.chat-box::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 18px;
+    background: linear-gradient(45deg, #ffc0cb, #a8e6cf, #ffd3b6);
+    z-index: -1;
+    animation: borderGradient 8s linear infinite;
+}
+
+@keyframes borderGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 消息项入场动画（假设消息类名为 .message） */
+.message {
+    margin: 8px 0;
+    padding: 10px 15px;
+    border-radius: 12px;
+    max-width: 70%;
+    animation: popIn 0.4s ease-out; 
+    text-align: center; 
+    margin: 10px auto; 
+    float: none; 
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+        margin-top: 15px; /* 从下方出现 */
+    }
+    70% { transform: scale(1.05); }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        margin-top: 8px;
+    }
+}
+
+/* 随机萌系装饰（星星/爱心） */
+.chat-container::before,
+.chat-container::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: floatDecor 6s ease-in-out infinite;
+    z-index: -1; /* 保持在容器下方 */
+}
+
+/* 随机生成不同装饰 */
+.chat-container::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff85a2'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.53L12 21.35z'/%3E%3C/svg%3E"); /* 爱心 */
+    top: 10%;
+    left: -15px;
+    animation-delay: 1s;
+}
+
+.chat-container::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a8e6cf'%3E%3Cpath d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/%3E%3C/svg%3E"); /* 星星 */
+    bottom: 15%;
+    right: -20px;
+    animation-duration: 5s;
+}
+
+@keyframes floatDecor {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-25px) rotate(20deg); }
+}
+
+/* 滚动条可爱化 */
+.chat-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+    background: #fff0f5;
+    border-radius: 4px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+    background: #ffc0cb;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover {
+    background: #ff85a2; /* 悬停变深粉 */
+}
+    
+
+/* 按钮样式 */
+.generate-btn {
+    display: inline-block;
+    width: auto;
+    min-width: 800px;      /* 最小宽度 */
+    max-width: 800px;      /* 最大宽度 */
+    padding: 20px 80px;    /* 水平间距*/
+    margin: 25px auto;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+    color: white;
+    border: none;
+    border-radius: 32px;    /* 圆角增加14% */
+    font-size: 22px;        /* 字号增大10% */
+    cursor: pointer;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 24px rgba(255,107,107,0.4); /* 阴影扩大20% */
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    letter-spacing: 0.8px;  /* 字间距增加60% */
+    
+    /* 呼吸动画 */
+    animation: btnBreath 3s ease-in-out infinite;
+}
+
+@keyframes btnBreath {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* 响应式适配 */
+@media (max-width: 1200px) {
+    .generate-btn {
+        max-width: 700px;
+        padding: 18px 72px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .generate-btn {
+        max-width: 90%;
+        min-width: 280px;
+        padding: 16px 64px;
+        border-radius: 28px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .generate-btn {
+        width: 100%;
+        max-width: 100%;
+        padding: 14px 32px;
+        border-radius: 24px;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+    }
+}
+
+
+
+/* 悬停动效增强 */
+.generate-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 25px rgba(255,107,107,0.6);
+    letter-spacing: 0.8px;  /* 悬停时字间距微调 */
+}
+/* 悬浮效果 */
+.generate-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(255,107,107,0.6),
+                inset 0 -4px 12px rgba(255,255,255,0.3);
+    animation: btnFloat 1.6s ease-in-out infinite;
+}
+
+/* 点击效果 */
+.generate-btn:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 4px 8px rgba(255,107,107,0.3);
+}
+/* 加载动画样式 */
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #8b5cf6;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+.generate-btn::before {
+    content: '✨';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: sparkle 1.2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3) rotate(15deg); }
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.modal {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    z-index: 1001;
+    width: 480px;
+    max-height: 80vh;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    animation: modal-fade-in 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #202124;
+}
+
+.modal h3 {
+    color: #1d1d1f;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 24px 0;
+    letter-spacing: -0.4px;
+}
+
+#event-details-content {
+    color: #333;
+    line-height: 1.6;
+    font-size: 15px;
+    margin: 0 0 24px 0;
+}
+
+#close-modal {
+    background: #0071e3;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    float: right;
+    letter-spacing: 0.2px;
+    position: absolute;
+    top: 25px;
+    right: 20px;
+    align-self: flex-end; /* 靠右对齐 */
+}
+
+
+#close-modal:hover {
+    background: #0077ED;
+    transform: scale(1.04);
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+}
+
+#close-modal:active {
+    transform: scale(0.98);
+}
+/*角色扮演关闭按钮*/
+.rp-close-modal {
+    background: #0071e3; /* 苹果蓝 */
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 24px; /* 苹果风格大圆角 */
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rp-close-modal:hover {
+    background: #0077ED;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+#modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    animation: overlay-fade-in 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* 自定义滚动条 */
+.modal::-webkit-scrollbar {
+    width: 10px; /* 加宽轨道 */
+    transition: all 0.3s ease;
+}
+
+.modal::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    margin: 4px 0;
+}
+
+.modal::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #6B46C1, #4299E1);
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(255,255,255,0.3);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 悬停动态效果 */
+.modal:hover::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #8B5CF6, #4F46E5);
+    box-shadow: 0 0 10px rgba(139,92,246,0.3);
+    transform: scaleX(1.1);
+}
+
+/* 拖动状态效果 */
+.modal::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(45deg, #9333EA, #4F46E5);
+    box-shadow: 0 0 15px rgba(147,51,234,0.5);
+}
+
+/* 滚动条轨道动态光效 */
+.modal::-webkit-scrollbar-track {
+    position: relative;
+    overflow: hidden;
+}
+
+.modal::-webkit-scrollbar-track::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 25%,
+        rgba(255,255,255,0.15) 50%,
+        transparent 75%
+    );
+    animation: trackLight 3s infinite linear;
+}
+
+@keyframes trackLight {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(100%); }
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+    .modal::-webkit-scrollbar {
+        width: 6px;
+    }
+    .modal::-webkit-scrollbar-thumb {
+        border-width: 1px;
+    }
+}
+
+/* 动画 */
+@keyframes modal-fade-in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes overlay-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.modal-content-wrapper {
+overflow-y: auto;
+max-height: calc(80vh - 120px);
+padding-right: 12px;
+margin-bottom: 24px;
+}
+
+
+/* 移动端适配 */
+@media (max-width: 600px) {
+    .modal {
+        width: 90%;
+        border-radius: 16px;
+        padding: 24px;
+    }
+
+    .modal h3 {
+        font-size: 20px;
+    }
+
+    #event-details-content {
+        font-size: 14px;
+    }
+}
+/* 新增角色扮演样式 */
+.roleplay-container {
+    margin-top: 20px;
+    border: 2px solid #8A2BE2;
+    border-radius: 10px;
+    padding: 15px;
+    background: rgba(138,43,226,0.1);
+}
+
+.roleplay-title {
+    color: #8A2BE2;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.roleplay-title::before {
+    content: '🎭';
+    margin-right: 8px;
+}
+
+.roleplay-box {
+    height: 200px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.9);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.roleplay-message {
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 80%;
+}
+
+.user-role-message {
+    background: #E6E6FA;
+    margin-left: auto;
+}
+
+.npc-role-message {
+    background: #9370DB;
+    color: white;
+}
+
+.roleplay-input {
+    display: flex;
+    gap: 10px;
+}
+
+.roleplay-input input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #9370DB;
+    border-radius: 20px;
+    outline: none;
+}
+
+.roleplay-input button {
+    background: #8A2BE2;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.roleplay-input button:hover {
+    background: #6A1B9A;
+}
+
+.dialog-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    position: relative;
+}
+
+.chat-history {
+    height: 300px;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+}
+
+.choice-btn {
+    margin: 5px;
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.clear-btn {
+    background: #dc3545;
+}
+/*角色扮演*/
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #5f6368;
+    cursor: pointer;
+    padding: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: #f1f3f4;
+}
+
+/* 角色扮演加载动画样式 */
+.rp-loading {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.rp-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #1a73e8;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+}
+
+.rp-loading-text {
+    color: #5f6368;
+    font-size: 14px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* 图片样式 */
+.image-container {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.story-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.text-content {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+/* 彩虹动态标题 */
+h1 {
+    background: linear-gradient(90deg,
+        #ff6b6b 0%,
+        #4ecdc4 25%,
+        #45b7d1 50%,
+        #96f2d7 75%,
+        #ffe66d 100%);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rainbowFlow 8s ease infinite;
+    text-shadow: 
+        0 2px 4px rgba(0,0,0,0.2),
+        0 0 20px rgba(255,255,255,0.3);
+    position: relative;
+    display: inline-block;
+    padding: 0 15px;
+}
+
+.container {
+    text-align: center; /* 容器居中 */
+}
+
+h1 {
+    display: inline-block; /* 保持inline-block特性 */
+    position: relative;
+    padding-left: 50px; /* 为图标预留空间 */
+    background: linear-gradient(90deg,
+        #ff6b6b 0%,
+        #4ecdc4 25%,
+        #45b7d1 50%,
+        #96f2d7 75%,
+        #ffe66d 100%);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rainbowFlow 8s ease infinite;
+    text-shadow: 
+        0 2px 4px rgba(0,0,0,0.2),
+        0 0 20px rgba(255,255,255,0.3);
+}
+
+/* 静态时钟图标 */
+h1::before {
+    content: '🕰️';
+    position: absolute;
+    left: 0;
+    color: #FFD700; /* 固定金色 */
+    font-size: 1.2em;
+    text-shadow: 0 0 8px rgba(255,215,0,0.5);
+    /* 移除动画属性 */
+    z-index: 1;
+    transform: rotate(0deg); /* 确保无旋转 */
+}
+
+@keyframes rainbowFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+/* 动态主题标签颜色 */
+.theme-label {
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+/* 不同主题颜色动画 */
+.theme-option:nth-child(1) .theme-label {
+    animation: colorWave1 6s infinite;
+}
+.theme-option:nth-child(2) .theme-label {
+    animation: colorWave2 6s infinite;
+}
+.theme-option:nth-child(3) .theme-label {
+    animation: colorWave3 6s infinite;
+}
+.theme-option:nth-child(4) .theme-label {
+    animation: colorWave4 6s infinite;
+}
+.theme-option:nth-child(5) .theme-label {
+    animation: colorWave5 6s infinite;
+}
+
+@keyframes colorWave1 {
+    0%, 100% { color: #ff4757; text-shadow: 0 0 10px rgba(255,71,87,0.5); }
+    50% { color: #ff6b81; text-shadow: 0 0 15px rgba(255,107,129,0.7); }
+}
+
+@keyframes colorWave2 {
+    0%, 100% { color: #2ed573; text-shadow: 0 0 10px rgba(46,213,115,0.5); }
+    50% { color: #7bed9f; text-shadow: 0 0 15px rgba(123,237,159,0.7); }
+}
+
+@keyframes colorWave3 {
+    0%, 100% { color: #3742fa; text-shadow: 0 0 10px rgba(55,66,250,0.5); }
+    50% { color: #5352ed; text-shadow: 0 0 15px rgba(83,82,237,0.7); }
+}
+
+@keyframes colorWave4 {
+    0%, 100% { color: #ffa502; text-shadow: 0 0 10px rgba(255,165,2,0.5); }
+    50% { color: #ffb142; text-shadow: 0 0 15px rgba(255,177,66,0.7); }
+}
+
+@keyframes colorWave5 {
+    0%, 100% { color: #6c5ce7; text-shadow: 0 0 10px rgba(108,92,231,0.5); }
+    50% { color: #a66efa; text-shadow: 0 0 15px rgba(166,110,250,0.7); }
+}
+
+/* 悬停增强效果 */
+.theme-label:hover {
+    transform: translateY(-2px);
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+
+/* 全局基础间距 */
+.container {
+    padding: 2rem 3rem; /* 32px 48px */
+    margin: 2rem auto;
+  }
+  
+
+  /* 时间选择器模块 */
+  .time-selector {
+    margin: 1.5rem 0; /* 24px */
+    gap: 1rem; /* 内部元素16px间距 */
+  }
+  
+  /* 下拉选项间距 */
+  .time-options {
+    padding: 1rem 0; /* 上下16px */
+  }
+  
+  .time-options li {
+    padding: 0.75rem 1.5rem 0.75rem 2.5rem; /* 左40px */
+    margin: 0.25rem 0.5rem; /* 上下4px 左右8px */
+    transition: margin 0.3s ease;
+  }
+  
+  .time-options li:hover {
+    margin: 0.5rem 0.75rem; /* 悬停间距增大 */
+  }
+  
+  /* 主题选项网格间距 */
+  .theme-options {
+    gap: 1.25rem; /* 20px */
+    margin: 2rem 0; /* 上下32px */
+  }
+  
+  .theme-option {
+    padding: 1.5rem; /* 24px */
+  }
+  
+  
+  /* 生成按钮间距 */
+  .generate-btn {
+    margin: 2.5rem auto; /* 40px */
+    padding: 1.125rem 3rem; /* 18px 48px */
+  }
+  
+  /* 模态框内部间距 */
+  .modal {
+    padding: 2rem;
+  }
+  
+  .modal-content-wrapper {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* 角色扮演消息间距 */
+  .roleplay-message {
+    margin: 0.75rem 0; /* 12px */
+    padding: 0.75rem 1.25rem; /* 12px 20px */
+  }
+  
+  /* 响应式适配 */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1.5rem;
+      margin: 1rem 0.5rem;
+    }
+  
+    .time-options li {
+      padding: 0.5rem 1rem 0.5rem 2rem;
+      margin: 0.25rem;
+    }
+  
+    .theme-options {
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+  
+    .generate-btn {
+      margin: 1.5rem auto;
+      padding: 1rem 2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    h1 {
+      margin-bottom: 2rem;
+    }
+    
+    .time-selector {
+      margin: 1rem 0;
+    }
+    
+    .timeline-container {
+      margin: 2rem 0;
+    }
+    
+    .modal {
+      padding: 1.5rem;
+    }
+  }
+
